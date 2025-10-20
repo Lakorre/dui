@@ -1,54 +1,585 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EGO - Menu (Extracted)</title>
-  <style>
-    :root{
-      --bg:#08020b;
-      --panel:#0d0511;
-      --neon1:#b57fff;
-      --neon2:#8a5bff;
-      --muted:#8b949e;
-      --glass: rgba(255,255,255,0.03);
-    }
-    html,body{height:100%;margin:0;font-family: "Segoe UI", Tahoma, Arial; background: linear-gradient(180deg,#05040a 0%, #0b0710 100%); color:#eaeaf2}
-    .sidebar {
-      position: fixed;left: 0;top: 0;bottom: 0;width: 340px;padding: 28px 20px;
-      box-shadow: 0 20px 60px rgba(10,5,20,0.6);
-      background: linear-gradient(180deg, rgba(30,10,40,0.9) 0%, rgba(10,4,20,0.8) 100%);
-      border-right: 1px solid rgba(255,255,255,0.03);backdrop-filter: blur(6px);
-      z-index: 9999;overflow:auto;
-    }
-    .logo {display:flex;gap:12px;align-items:center;margin-bottom:18px;}
-    .logo .dot {width:56px;height:56px;border-radius:14px;background: linear-gradient(135deg,var(--neon1),var(--neon2));
-      box-shadow: 0 0 18px var(--neon1), 0 0 40px var(--neon2);
-      display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:20px;}
-    .logo h1{font-size:20px;margin:0;color:var(--neon1);text-shadow:0 0 10px rgba(139,89,255,0.25)}
-    .logo p{margin:0;font-size:12px;color:var(--muted)}
-    .section {margin-top:12px;border-radius:10px;overflow:hidden;border: 1px solid rgba(255,255,255,0.03);}
-    .section .head {display:flex;align-items:center;justify-content:space-between;gap:10px;
-      padding:12px 14px;background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));cursor:pointer;}
-    .section .head h3{margin:0;color:var(--neon1);font-size:14px}
-    .section .items {display:none;padding:8px 10px 12px 10px;background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);}
-    .section.open .items { display:block; }
-    .item {display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;transition: all .12s ease;
-      color:#fff;margin-bottom:6px;background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border: 1px solid rgba(255,255,255,0.02);}
-    .item:hover{transform: translateX(-6px);box-shadow: 0 6px 20px rgba(138,91,255,0.08), inset 0 0 30px rgba(181,127,255,0.02);
-      border-color: rgba(138,91,255,0.15);}
-    .content {margin-left: 360px;padding: 30px;color:#cfcfe6;min-height:100vh;}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: transparent;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+            margin: 0;
+            padding: 50px;
+        }
+
+        .menu-container {
+            width: 400px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3a3a0a 0%, #1a1a0a 100%);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 230, 0, 0.3) 0%, transparent 70%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .logo {
+            font-size: 72px;
+            font-weight: bold;
+            color: #FFE600;
+            text-shadow: 0 0 20px #FFE600, 0 0 40px #FFE600, 0 0 60px #FFE600;
+            letter-spacing: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .menu-title {
+            background: rgba(80, 80, 20, 0.6);
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 230, 0, 0.2);
+        }
+
+        .menu-items {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .menu-items::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .menu-items::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-items::-webkit-scrollbar-thumb {
+            background: rgba(255, 230, 0, 0.5);
+            border-radius: 3px;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(40, 40, 20, 0.3);
+            outline: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(80, 80, 20, 0.6);
+            padding-left: 25px;
+        }
+
+        .menu-item.selected {
+            background: linear-gradient(90deg, rgba(180, 180, 20, 0.4) 0%, rgba(80, 80, 20, 0.6) 100%);
+            padding-left: 25px;
+            border-left: 3px solid #FFE600;
+        }
+
+        .arrow {
+            color: rgba(255, 230, 0, 0.8);
+            font-size: 18px;
+        }
+
+        .footer {
+            background: rgba(20, 20, 10, 0.8);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-top: 1px solid rgba(255, 230, 0, 0.2);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .coin-icon {
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle, #FFE600 0%, #B8860B 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
+        }
+
+        /* Submenu Styles */
+        .submenu-container {
+            width: 500px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(20, 20, 10, 0.8);
+            border-bottom: 1px solid rgba(255, 230, 0, 0.2);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-right: 1px solid rgba(255, 230, 0, 0.1);
+            background: rgba(30, 30, 15, 0.5);
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab:hover {
+            background: rgba(60, 60, 20, 0.6);
+        }
+
+        .tab.active {
+            background: linear-gradient(180deg, rgba(180, 180, 20, 0.4) 0%, rgba(80, 80, 20, 0.6) 100%);
+            border-bottom: 2px solid #FFE600;
+        }
+
+        .content {
+            display: flex;
+            height: 400px;
+        }
+
+        .menu-list {
+            flex: 1;
+            overflow-y: auto;
+            background: rgba(15, 15, 8, 0.8);
+        }
+
+        .menu-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .menu-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 230, 0, 0.5);
+            border-radius: 3px;
+        }
+
+        .submenu-item {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            outline: none;
+        }
+
+        .submenu-item:hover {
+            background: rgba(60, 60, 20, 0.5);
+            padding-left: 25px;
+        }
+
+        .submenu-item.selected {
+            background: linear-gradient(90deg, rgba(180, 180, 20, 0.4) 0%, rgba(80, 80, 20, 0.6) 100%);
+            padding-left: 25px;
+            border-left: 3px solid #FFE600;
+        }
+
+        .menu-item-text {
+            flex: 1;
+        }
+
+        .menu-item-value {
+            color: rgba(255, 230, 0, 0.8);
+            font-size: 13px;
+            margin: 0 10px;
+        }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: rgba(100, 100, 100, 0.3);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .submenu-header {
+            background: rgba(80, 80, 20, 0.6);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 230, 0, 0.2);
+        }
+
+        .back-arrow {
+            color: #FFE600;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="logo"><div class="dot">E</div><div><h1>EGO</h1><p>Neon sidebar demo</p></div></div>
-    <div class="section open" id="player"><div class="head" onclick="toggleSection('player')"><h3>Player</h3></div>
-      <div class="items"><div class="item"><div>Any Item Trigger (SAFE)</div></div></div></div>
-    <div class="section open" id="server"><div class="head" onclick="toggleSection('server')"><h3>Server</h3></div>
-      <div class="items"><div class="item"><div>Money Trigger (SAFE)</div></div></div></div>
-  </aside>
-  <main class="content"><h2>Preview</h2></main>
-  <script>function toggleSection(id){const el=document.getElementById(id);if(!el)return;el.classList.toggle('open');}</script>
+    <!-- Main Menu -->
+    <div class="menu-container" id="mainMenu">
+        <div class="header">
+            <div class="logo">AURA</div>
+        </div>
+
+        <div class="menu-title">Main menu</div>
+        <div class="menu-items">
+            <div class="menu-item selected" data-menu="player">
+                <span>Player</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="server">
+                <span>Server</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="weapon">
+                <span>Weapon</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="combat">
+                <span>Combat</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="vehicle">
+                <span>Vehicle</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="visual">
+                <span>Visual</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="misc">
+                <span>Miscellaneous</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="menu-item" data-menu="settings">
+                <span>Settings</span>
+                <span class="arrow">›</span>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footer-left">
+                <div class="coin-icon">$</div>
+                <span>123456</span>
+                <span style="opacity: 0.6;">| 3d ago</span>
+            </div>
+            <span>1/9</span>
+        </div>
+    </div>
+
+    <!-- Player Submenu with Tabs -->
+    <div class="submenu-container hidden" id="playerSubmenu">
+        <div class="submenu-header" onclick="backToMain()">
+            <span class="back-arrow">‹</span>
+            <span>Player Options</span>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('players')">Players</div>
+            <div class="tab" onclick="switchTab('actions')">Actions</div>
+        </div>
+
+        <div class="content">
+            <!-- Players Tab -->
+            <div class="menu-list" id="playersTab">
+                <div class="submenu-item selected">
+                    <span class="menu-item-text">Spectate</span>
+                    <div class="toggle" onclick="toggleOption(this, 'spectate')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Ram Player</span>
+                    <div class="toggle" onclick="toggleOption(this, 'ram')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">God Mode</span>
+                    <div class="toggle" onclick="toggleOption(this, 'godmode')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Infinite Ammo</span>
+                    <div class="toggle" onclick="toggleOption(this, 'infammo')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">No Ragdoll</span>
+                    <div class="toggle" onclick="toggleOption(this, 'noragdoll')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Teleport To</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Clone Player</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Animations</span>
+                    <span class="menu-item-value">Jerk Off</span>
+                    <span class="arrow">‹ ›</span>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Attach Vehicles</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Steal Vehicle</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+
+            <!-- Actions Tab -->
+            <div class="menu-list hidden" id="actionsTab">
+                <div class="submenu-item selected">
+                    <span class="menu-item-text">God Mode</span>
+                    <div class="toggle" onclick="toggleOption(this, 'godmode')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Infinite Stamina</span>
+                    <div class="toggle" onclick="toggleOption(this, 'stamina')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Super Jump</span>
+                    <div class="toggle" onclick="toggleOption(this, 'superjump')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Fast Run</span>
+                    <div class="toggle" onclick="toggleOption(this, 'fastrun')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Invisibility</span>
+                    <div class="toggle" onclick="toggleOption(this, 'invisible')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Teleport Waypoint</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="submenu-item">
+                    <span class="menu-item-text">Heal Player</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-left">
+                <span style="opacity: 0.7; font-size: 12px;">Beta 0.1 [ discord.gg/0e ]</span>
+            </div>
+            <span>(8/9)</span>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'main';
+        let currentTab = 'players';
+        let selectedIndex = 0;
+        let menuItems = [];
+        let toggleStates = {};
+
+        function updateMenuItems() {
+            if (currentView === 'main') {
+                menuItems = document.querySelectorAll('#mainMenu .menu-item');
+            } else {
+                const activeTab = document.getElementById(currentTab + 'Tab');
+                menuItems = activeTab.querySelectorAll('.submenu-item');
+            }
+            updateSelection();
+        }
+
+        function updateSelection() {
+            menuItems.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('selected');
+                    item.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        function openSubmenu(menu) {
+            if (menu === 'player') {
+                currentView = 'player';
+                selectedIndex = 0;
+                document.getElementById('mainMenu').classList.add('hidden');
+                document.getElementById('playerSubmenu').classList.remove('hidden');
+                updateMenuItems();
+            }
+        }
+
+        function backToMain() {
+            currentView = 'main';
+            selectedIndex = 0;
+            document.getElementById('playerSubmenu').classList.add('hidden');
+            document.getElementById('mainMenu').classList.remove('hidden');
+            updateMenuItems();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            selectedIndex = 0;
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('playersTab').classList.toggle('hidden', tab !== 'players');
+            document.getElementById('actionsTab').classList.toggle('hidden', tab !== 'actions');
+            
+            updateMenuItems();
+        }
+
+        function toggleOption(element, option) {
+            element.classList.toggle('active');
+            toggleStates[option] = element.classList.contains('active');
+            
+            window.postMessage({
+                action: 'toggle',
+                option: option,
+                state: toggleStates[option]
+            }, '*');
+        }
+
+        // Keyboard navigation
+        window.addEventListener('message', function(event) {
+            const data = event.data;
+            
+            if (data.action === 'keyPress') {
+                const key = data.key;
+                
+                if (key === 'ArrowUp') {
+                    selectedIndex = Math.max(0, selectedIndex - 1);
+                    updateSelection();
+                } else if (key === 'ArrowDown') {
+                    selectedIndex = Math.min(menuItems.length - 1, selectedIndex + 1);
+                    updateSelection();
+                } else if (key === 'Enter') {
+                    const selectedItem = menuItems[selectedIndex];
+                    
+                    if (currentView === 'main') {
+                        const menuName = selectedItem.getAttribute('data-menu');
+                        if (menuName) {
+                            openSubmenu(menuName);
+                        }
+                    } else {
+                        const toggle = selectedItem.querySelector('.toggle');
+                        if (toggle) {
+                            toggle.click();
+                        }
+                    }
+                } else if (key === 'ArrowLeft') {
+                    if (currentView === 'player') {
+                        backToMain();
+                    }
+                } else if (key === 'ArrowRight') {
+                    if (currentView === 'player') {
+                        const tabs = document.querySelectorAll('.tab');
+                        if (currentTab === 'players') {
+                            tabs[1].click();
+                        } else {
+                            tabs[0].click();
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize
+        updateMenuItems();
+    </script>
 </body>
 </html>
